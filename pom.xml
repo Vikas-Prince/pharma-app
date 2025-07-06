@@ -13,17 +13,16 @@
   <name>Pharmaceutical Company App</name>
   <description>Spring Boot application for a pharmaceutical company</description>
 
-  <properties>
-    <java.version>17</java.version>
-    <spring.boot.version>3.2.0</spring.boot.version>
-  </properties>
-
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>${spring.boot.version}</version>
+    <version>3.2.4</version> <!-- ✅ Stable, available on Maven Central -->
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
+
+  <properties>
+    <java.version>17</java.version>
+  </properties>
 
   <dependencies>
 
@@ -39,7 +38,7 @@
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
     </dependency>
 
-    <!-- Spring Boot DevTools (hot reload during development) -->
+    <!-- DevTools for live reload -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
@@ -47,13 +46,13 @@
       <optional>true</optional>
     </dependency>
 
-    <!-- Spring Boot Actuator for health checks -->
+    <!-- Actuator for health checks -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
 
-    <!-- JUnit 5 for testing -->
+    <!-- JUnit for testing -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>

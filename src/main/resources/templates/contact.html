@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Contact Us</title>
+    <link rel="stylesheet" href="/style.css" />
+    <style>
+      .navbar {
+        background-color: #004080;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+      }
+
+      .navbar h2 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+
+      .navbar a {
+        color: white;
+        text-decoration: none;
+        margin-left: 1rem;
+        font-weight: bold;
+      }
+
+      .navbar a:hover {
+        text-decoration: underline;
+      }
+
+      .container {
+        padding: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+      <h2>CSI DevOps Project</h2>
+      <div>
+        <a href="/">Home</a>
+        <a href="/contact">Contact Us</a>
+      </div>
+    </div>
+
+    <div class="container">
+      <h1>Contact Us</h1>
+      <p>If you have any questions about our products, please reach out:</p>
+      <ul>
+        <li><strong>Email:</strong> support@pharmaco.com</li>
+        <li><strong>Phone:</strong> +91-98765-43210</li>
+        <li><strong>Address:</strong> PharmaCorp HQ, Hyderabad, India</li>
+      </ul>
+
+      <a href="/" style="display: inline-block; margin-top: 1rem"
+        >← Back to Home</a
+      >
+    </div>
+  </body>
+</html>
