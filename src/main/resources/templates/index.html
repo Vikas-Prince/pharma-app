@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Pharma Drugs</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <h1>Pharmaceutical Drug Catalog</h1>
+    <table>
+        <thead>
+            <tr><th>Name</th><th>Manufacturer</th><th>Expiry</th></tr>
+        </thead>
+        <tbody>
+            <tr th:each="drug : ${drugs}">
+                <td th:text="${drug.name}">Name</td>
+                <td th:text="${drug.manufacturer}">Manufacturer</td>
+                <td th:text="${drug.expiry}">Expiry</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
