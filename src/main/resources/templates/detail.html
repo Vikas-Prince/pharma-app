@@ -1,62 +1,31 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${drug.name} + ' Details'">Drug Details</title>
+    <title>Drug Details</title>
     <link rel="stylesheet" href="/style.css">
-    <style>
-        .navbar {
-            background-color: #004080;
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: white;
-        }
-
-        .navbar h2 {
-            margin: 0;
-            font-size: 1.5rem;
-        }
-
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            margin-left: 1rem;
-            font-weight: bold;
-        }
-
-        .navbar a:hover {
-            text-decoration: underline;
-        }
-
-        .container {
-            padding: 2rem;
-        }
-    </style>
 </head>
 <body>
 
-    <!-- Navigation Bar -->
-    <div class="navbar">
-        <h2>CSI DevOps Project</h2>
-        <div>
-            <a href="/">Home</a>
-            <a href="/contact">Contact Us</a>
-        </div>
+<div class="navbar">
+    <h2>CSI DevOps Project</h2>
+    <div>
+        <a href="/">Home</a>
+        <a href="/contact">Contact Us</a>
     </div>
+</div>
 
-    <div class="container">
-        <h1 th:text="${drug.name}"></h1>
+<div class="container">
+    <h1 th:text="${drug.name}">Drug Name</h1>
 
-        <p><strong>Description:</strong> <span th:text="${drug.description}"></span></p>
-        <p><strong>Usage Instructions:</strong> <span th:text="${drug.usage}"></span></p>
-        <p><strong>Safety Precautions:</strong> <span th:text="${drug.safety}"></span></p>
-        <p><strong>Manufacturer:</strong> <span th:text="${drug.manufacturer}"></span></p>
-        <p><strong>Expiry Date:</strong> <span th:text="${drug.expiry}"></span></p>
-        <p><strong>Category:</strong> <span th:text="${drug.category}"></span></p>
+    <p><strong>Description:</strong> <span th:text="${drug.description}"></span></p>
+    <p><strong>Usage Instructions:</strong> <span th:text="${drug.usage}"></span></p>
+    <p><strong>Safety Precautions:</strong> <span th:text="${drug.safety}"></span></p>
+    <p><strong>Manufacturer:</strong> <span th:text="${drug.manufacturer}"></span></p>
+    <p><strong>Expiry Date:</strong> <span th:text="${drug.expiry}"></span></p>
+    <p><strong>Category:</strong> <span th:text="${drug.category}"></span></p>
 
-        <a href="/" style="display: inline-block; margin-top: 1rem;">← Back to Drug List</a>
-    </div>
+    <a class="back-link" href="/">← Back to Drug List</a>
+</div>
 
 </body>
 </html>
