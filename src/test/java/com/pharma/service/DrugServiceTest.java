@@ -17,4 +17,18 @@ public class DrugServiceTest {
         assertEquals(2, drugs.size());
         assertEquals("Paracetamol", drugs.get(0).getName());
     }
+
+    @Test
+    public void testGetDrugByNameFound() {
+        Drug drug = service.getDrugByName("Amoxicillin");
+        assertNotNull(drug);
+        assertEquals("Amoxicillin", drug.getName());
+        assertEquals("Antibiotic", drug.getCategory());
+    }
+
+    @Test
+    public void testGetDrugByNameNotFound() {
+        Drug drug = service.getDrugByName("UnknownDrug");
+        assertNull(drug);
+    }
 }
