@@ -13,9 +13,11 @@ public class DrugServiceTest {
 
     @Test
     public void testGetAllDrugs() {
-        List<Drug> drugs = service.getAllDrugs();
-        assertEquals(2, drugs.size());
-        assertEquals("Paracetamol", drugs.get(0).getName());
+    List<Drug> drugs = service.getAllDrugs();
+
+    assertEquals(10, drugs.size()); 
+    assertEquals("Paracetamol", drugs.get(0).getName()); 
+    
     }
 
     @Test
