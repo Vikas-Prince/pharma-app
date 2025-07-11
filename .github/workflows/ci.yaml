@@ -115,16 +115,14 @@ jobs:
       - name: 📥 Checkout source code
         uses: actions/checkout@v4
 
-      - name: 🛠️ Install Trivy
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget
-          wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.50.2_Linux-64bit.deb
-          sudo dpkg -i trivy_0.50.2_Linux-64bit.deb
-
-      - name: 🔍 Scan source code with Trivy (fs mode)
-        run: |
-          trivy fs . --exit-code 1 --severity CRITICAL,HIGH --no-progress
+      - name: 🔍 Scan source code with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
 
 
   
