@@ -8,6 +8,10 @@ on:
     branches:
       - main
 
+permissions:
+  checks: write
+  contents: read
+
 jobs:
   build-and-test:
     name: Build and Test
@@ -48,3 +52,5 @@ jobs:
           name: Unit Tests
           path: target/surefire-reports/*.xml
           reporter: java-junit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
