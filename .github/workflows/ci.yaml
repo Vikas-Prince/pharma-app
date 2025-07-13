@@ -174,18 +174,14 @@ jobs:
         run: |
           USERNAME=$(echo "${{ secrets.GHCR_USERNAME }}" | tr '[:upper:]' '[:lower:]')
           IMAGE_TAG=ghcr.io/$USERNAME/springboot-app:${{ github.sha }}
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           docker build -t $IMAGE_TAG .
 
       - name: 🔍 Scan Docker Image with Trivy and export report
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'image'
-          severity: CRITICAL,HIGH
-          scan-ref: ghcr.io/${{ secrets.GHCR_USERNAME }}/springboot-app:${{ github.sha }}
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          output: 'trivy-image-report.txt'
+        run: |
+          USERNAME=$(echo "${{ secrets.GHCR_USERNAME }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE_TAG=ghcr.io/$USERNAME/springboot-app:${{ github.sha }}
+          trivy image --exit-code 1 --severity CRITICAL,HIGH --ignore-unfixed --format table --output trivy-image-report.txt $IMAGE_TAG
 
       - name: 📤 Upload Trivy image scan report
         uses: actions/upload-artifact@v4
@@ -195,7 +191,8 @@ jobs:
 
       - name: 🚀 Push Image to GHCR & ACR
         run: |
-          GHCR_TAG=ghcr.io/${{ secrets.GHCR_USERNAME }}/springboot-app:${{ github.sha }}
+          USERNAME=$(echo "${{ secrets.GHCR_USERNAME }}" | tr '[:upper:]' '[:lower:]')
+          GHCR_TAG=ghcr.io/$USERNAME/springboot-app:${{ github.sha }}
           ACR_TAG=${{ secrets.ACR_NAME }}.azurecr.io/springboot-app:${{ github.sha }}
           docker tag $GHCR_TAG $ACR_TAG
           docker push $GHCR_TAG
