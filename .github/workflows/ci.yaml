@@ -70,190 +70,181 @@ jobs:
         with:
           args: detect --source=. --verbose --redact
 
-  # code-quality-sonarqube:
-  #   name: SonarQube Code Analysis
-  #   runs-on: ubuntu-latest
-  #   needs: build-and-test
-
-  #   steps:
-  #     - name: Checkout source code
-  #       uses: actions/checkout@v4
-
-  #     - name: Set up JDK 17
-  #       uses: actions/setup-java@v4
-  #       with:
-  #         distribution: 'temurin'
-  #         java-version: '17'
-
-  #     - name: Run SonarQube Analysis
-  #       env:
-  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  #       run: |
-  #         mvn clean verify sonar:sonar \
-  #           -Dsonar.projectKey=<your_project_key> \
-  #           -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-  #           -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
-  #     - name: Run SonarQube scan with Quality Gate check
-  #       uses: SonarSource/sonarqube-scan-action@v2
-  #       env:
-  #           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  #           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-  #       with:
-  #         args: >
-  #           -Dsonar.projectKey=<your_project_key>
-  #           -Dsonar.qualitygate.wait=true
-  #           -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-
-  # trivy-fs-scan:
-  #   name: Trivy Filesystem Scan
-  #   runs-on: ubuntu-latest
-  #   needs: build-and-test
-
-  #   steps:
-  #     - name: Checkout source code
-  #       uses: actions/checkout@v4
-
-  #     - name: Scan source code with Trivy and export report
-  #       uses: aquasecurity/trivy-action@master
-  #       with:
-  #         scan-type: "fs"
-  #         severity: CRITICAL,HIGH
-  #         scan-ref: "."
-  #         format: "table"
-  #         exit-code: "1"
-  #         ignore-unfixed: true
-  #         output: "trivy-report.txt"
-
-  #     - name: Upload Trivy report artifact
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: trivy-report
-  #         path: trivy-report.txt
-
-  # docker-build-and-scan:
-  #   name: Docker Build and Scan
-  #   runs-on: ubuntu-latest
-  #   needs: build-and-test
-
-  #   steps:
-  #     - name: Checkout source
-  #       uses: actions/checkout@v4
-
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v3
-
-  #     - name: Cache Docker layers
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: /tmp/.buildx-cache
-  #         key: docker-${{ github.sha }}
-  #         restore-keys: docker-
-
-  #     - name: Log in to GitHub Container Registry (GHCR)
-  #       uses: docker/login-action@v3
-  #       with:
-  #         registry: ghcr.io
-  #         username: ${{ secrets.GHCR_USERNAME }}
-  #         password: ${{ secrets.GHCR_TOKEN }}
-
-  #     - name: Azure Login (OIDC)
-  #       uses: azure/login@v1
-  #       with:
-  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
-  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-  #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-  #     - name: Azure ACR Login
-  #       run: |
-  #         az acr login --name ${{ secrets.ACR_NAME }}
-
-  #     - name: Build Docker Image
-  #       run: |
-  #         USERNAME=$(echo "${{ secrets.GHCR_USERNAME }}" | tr '[:upper:]' '[:lower:]')
-  #         IMAGE_TAG=ghcr.io/$USERNAME/springboot-app:${{ github.sha }}
-  #         echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-  #         docker build -t $IMAGE_TAG .
-
-  #     - name: Scan Docker Image with Trivy and export report
-  #       uses: aquasecurity/trivy-action@master
-  #       with:
-  #         scan-type: "image"
-  #         severity: CRITICAL,HIGH
-  #         scan-ref: ${{ env.IMAGE_TAG }}
-  #         format: "table"
-  #         exit-code: "1"
-  #         ignore-unfixed: true
-  #         output: "trivy-image-report.txt"
-
-  #     - name: Push Image to GHCR & ACR
-  #       run: |
-  #         USERNAME=$(echo "${{ secrets.GHCR_USERNAME }}" | tr '[:upper:]' '[:lower:]')
-  #         GHCR_TAG=ghcr.io/$USERNAME/springboot-app:${{ github.sha }}
-  #         ACR_TAG=${{ secrets.ACR_NAME }}.azurecr.io/springboot-app:${{ github.sha }}
-  #         docker tag $GHCR_TAG $ACR_TAG
-  #         docker push $GHCR_TAG
-  #         docker push $ACR_TAG
-
-  # push-artifact-to-nexus:
-  #   name: Push Artifact to Nexus
-  #   runs-on: ubuntu-latest
-  #   needs: build-and-test
-
-  #   steps:
-  #     - name: Checkout source
-  #       uses: actions/checkout@v4
-
-  #     - name: Set up JDK
-  #       uses: actions/setup-java@v4
-  #       with:
-  #         distribution: 'temurin'
-  #         java-version: '17'
-
-  #     - name: 🛠️ Build Artifact (JAR)
-  #       run: mvn clean package -DskipTests
-
-  #     - name: Deploy to Nexus
-  #       run: |
-  #         mvn deploy -DskipTests \
-  #           -DaltDeploymentRepository=nexus::default::${{ secrets.NEXUS_URL }} \
-  #           -Dnexus.username=${{ secrets.NEXUS_USERNAME }} \
-  #           -Dnexus.password=${{ secrets.NEXUS_PASSWORD }}
-  
-  deploy-to-dev:
-    name: 🚀 Deploy to Dev (GitOps)
+  code-quality-sonarqube:
+    name: SonarQube Code Analysis
     runs-on: ubuntu-latest
-    needs: docker-build-and-scan
-    environment: dev
+    needs: build-and-test
 
     steps:
-      - name: 📥 Checkout GitOps Repository
+      - name: Checkout source code
         uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Run SonarQube Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=<your_project_key> \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+      - name: Run SonarQube scan with Quality Gate check
+        uses: SonarSource/sonarqube-scan-action@v2
+        env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=<your_project_key>
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+
+  trivy-fs-scan:
+    name: Trivy Filesystem Scan
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Scan source code with Trivy and export report
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          severity: CRITICAL,HIGH
+          scan-ref: "."
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          output: "trivy-report.txt"
+
+      - name: Upload Trivy report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-report
+          path: trivy-report.txt
+
+  docker-build-and-scan:
+    name: Docker Build and Scan
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: docker-${{ github.sha }}
+          restore-keys: docker-
+
+      - name: Log in to GitHub Container Registry (GHCR)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Azure ACR Login
+        run: |
+          az acr login --name ${{ secrets.ACR_NAME }}
+
+      - name: Build Docker Image
+        run: |
+          USERNAME=$(echo "${{ secrets.GHCR_USERNAME }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE_TAG=ghcr.io/$USERNAME/springboot-app:${{ github.sha }}
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+          docker build -t $IMAGE_TAG .
+
+      - name: Scan Docker Image with Trivy and export report
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "image"
+          severity: CRITICAL,HIGH
+          scan-ref: ${{ env.IMAGE_TAG }}
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          output: "trivy-image-report.txt"
+
+      - name: Push Image to GHCR & ACR
+        run: |
+          USERNAME=$(echo "${{ secrets.GHCR_USERNAME }}" | tr '[:upper:]' '[:lower:]')
+          GHCR_TAG=ghcr.io/$USERNAME/springboot-app:${{ github.sha }}
+          ACR_TAG=${{ secrets.ACR_NAME }}.azurecr.io/springboot-app:${{ github.sha }}
+          docker tag $GHCR_TAG $ACR_TAG
+          docker push $GHCR_TAG
+          docker push $ACR_TAG
+
+  push-artifact-to-nexus:
+    name: Push Artifact to Nexus
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 🛠️ Build Artifact (JAR)
+        run: mvn clean package -DskipTests
+
+      - name: Deploy to Nexus
+        run: |
+          mvn deploy -DskipTests \
+            -DaltDeploymentRepository=nexus::default::${{ secrets.NEXUS_URL }} \
+            -Dnexus.username=${{ secrets.NEXUS_USERNAME }} \
+            -Dnexus.password=${{ secrets.NEXUS_PASSWORD }}
+  
+  update-gitops-dev:
+    needs: docker-build-and-scan
+    runs-on: ubuntu-latest
+    environment:
+      name: dev
+    if: github.ref == 'refs/heads/main' 
+    steps:
+      - name: Checkout GitOps Repo
+        uses: actions/checkout@v3
         with:
           repository: Vikas-Prince/test-ops
-          token: ${{ secrets.GITHUB_TOKEN }}
-          path: test-ops
+          token: ${{ secrets.GITOPS_TOKEN }}
+          path: gitops
 
-      - name: 📝 Patch rollout image tag using sed
-        run: |
-          cd test-ops/environments/dev
-          sed -i "s|\(image: ghcr.io.*/springboot-app:\).*|\1${{ github.sha }}|" rollout-patch.yaml
-
-      - name: 📤 Commit and Push GitOps Changes
+      - name: Update image tag in Dev YAML
         run: |
           cd test-ops
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git checkout -b deploy/dev-${{ github.run_number }}
-          git add environments/dev/rollout-patch.yaml
-          git commit -m "🔄 Update rollout tag to ${{ github.sha }} in dev"
-          git push origin deploy/dev-${{ github.run_number }}
+          sed -i "s|image: .*|image: ${{ secrets.ACR_LOGIN_SERVER }}/${{ secrets.ACR_NAME }}/springboot-app:${{ env.IMAGE_TAG }}|" environments/dev/rollout-patch.yaml
 
-      - name: 🔀 Create PR to Deploy to Dev
+      - name: Create PR to GitOps (Dev)
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: "Deploy to Dev: ${{ github.sha }}"
-          body: "This PR updates rollout-patch.yaml to tag `${{ github.sha }}` for the dev environment."
+          token: ${{ secrets.GHCR_TOKEN }}
+          commit-message: "Deploy to Dev - Image Tag ${{ env.IMAGE_TAG }}"
+          title: "Deploy to Dev - ${{ env.IMAGE_TAG }}"
+          body: "Automated deployment to Dev environment"
           base: main
-          head: deploy/dev-${{ github.run_number }}
+          branch: auto/update-dev-${{ github.sha }}
