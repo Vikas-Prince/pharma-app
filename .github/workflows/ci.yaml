@@ -233,7 +233,7 @@ jobs:
 
       - name: Update dev tag in patch-rollout.yaml
         run: |
-          cd environment/dev
+          cd environments/dev
 
           sed -i 's|image: ghcr.io/username/springboot-app:.*|image: ghcr.io/${ ${{ env.IMAGE_TAG }}}|' patch-rollout.yaml
 
