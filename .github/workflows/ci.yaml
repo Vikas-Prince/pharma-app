@@ -232,7 +232,7 @@ jobs:
         with:
           repository: Vikas-Prince/test-ops
           token: ${{ secrets.GHCR_TOKEN }}
-          path: gitops
+          path: test-ops
 
       - name: Update image tag in Dev YAML
         run: |
