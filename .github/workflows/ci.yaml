@@ -241,7 +241,7 @@ jobs:
 
       - name: 📤 Commit and Push GitOps Changes
         run: |
-          cd gitops
+          cd test-ops
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git checkout -b deploy/dev-${{ github.run_number }}
