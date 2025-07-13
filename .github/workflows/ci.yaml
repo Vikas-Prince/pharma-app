@@ -228,7 +228,7 @@ jobs:
       - name: Checkout GitOps repository
         uses: actions/checkout@v4
         with:
-          repository: https://github.com/Vikas-Prince/test-ops.git
+          repository: Vikas-Prince/test-ops
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update dev tag in patch-rollout.yaml
