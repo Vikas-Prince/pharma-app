@@ -254,3 +254,4 @@ jobs:
           body: "Automated deployment to Dev environment"
           base: main
           branch: auto/update-dev-${{ github.sha }}
+          working-directory: test-ops
