@@ -231,11 +231,11 @@ jobs:
           repository: Vikas-Prince/test-ops
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update dev tag in patch-rollout.yaml
+      - name: Update dev tag in rollout-patch.yaml
         run: |
           cd environments/dev
 
-          sed -i 's|image: ghcr.io/username/springboot-app:.*|image: ghcr.io/${ ${{ env.IMAGE_TAG }}}|' patch-rollout.yaml
+          sed -i 's|image: ghcr.io/username/springboot-app:.*|image: ghcr.io/${ ${{ env.IMAGE_TAG }}}|' rollout-patch.yaml
 
       - name: Create a new branch for dev PR
         run: |
