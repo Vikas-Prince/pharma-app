@@ -172,7 +172,8 @@ jobs:
 
       - name: 🐳 Build Docker Image
         run: |
-          IMAGE_TAG=ghcr.io/${{ secrets.GHCR_USERNAME }}/springboot-app:${{ github.sha }}
+          USERNAME=$(echo "${{ secrets.GHCR_USERNAME }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE_TAG=ghcr.io/$USERNAME/springboot-app:${{ github.sha }}
           docker build -t $IMAGE_TAG .
 
       - name: 🔍 Scan Docker Image with Trivy and export report
