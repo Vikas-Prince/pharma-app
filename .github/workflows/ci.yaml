@@ -234,6 +234,12 @@ jobs:
           token: ${{ secrets.GHCR_TOKEN }}
           path: test-ops
 
+      - name: Set Git user config
+        run: |
+          cd test-ops
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
       - name: Update image tag in Dev YAML
         run: |
           cd test-ops
