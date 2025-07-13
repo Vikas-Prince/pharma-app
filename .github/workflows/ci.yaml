@@ -3,7 +3,7 @@ name: Java CI - Enterprise Workflow
 on:
   push:
     branches:
-      - main
+      - develop
   pull_request:
     branches:
       - main
@@ -25,8 +25,8 @@ jobs:
       - name: ☕ Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: "temurin"
+          java-version: "17"
 
       - name: 💾 Cache Maven packages
         uses: actions/cache@v4
@@ -56,7 +56,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-
   gitleaks-scan:
     name: 🔐 Gitleaks Secret Scan
     runs-on: ubuntu-latest
@@ -71,7 +70,6 @@ jobs:
         with:
           args: detect --source=. --verbose --redact
 
-  
   # code-quality-sonarqube:
   #   name: 🧠 SonarQube Code Analysis
   #   runs-on: ubuntu-latest
@@ -95,7 +93,7 @@ jobs:
   #           -Dsonar.projectKey=<your_project_key> \
   #           -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
   #           -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-      
+
   #     - name: 📊 Run SonarQube scan with Quality Gate check
   #       uses: SonarSource/sonarqube-scan-action@v2
   #       env:
@@ -119,13 +117,13 @@ jobs:
       - name: 🔍 Scan source code with Trivy and export report
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
+          scan-type: "fs"
           severity: CRITICAL,HIGH
-          scan-ref: '.'
-          format: 'table'
-          exit-code: '1'
+          scan-ref: "."
+          format: "table"
+          exit-code: "1"
           ignore-unfixed: true
-          output: 'trivy-report.txt'
+          output: "trivy-report.txt"
 
       - name: 📤 Upload Trivy report artifact
         uses: actions/upload-artifact@v4
@@ -178,16 +176,15 @@ jobs:
           docker build -t $IMAGE_TAG .
 
       - name: 🔍 Scan Docker Image with Trivy and export report
-        run: |
-          USERNAME=$(echo "${{ secrets.GHCR_USERNAME }}" | tr '[:upper:]' '[:lower:]')
-          IMAGE_TAG=ghcr.io/$USERNAME/springboot-app:${{ github.sha }}
-          trivy image --exit-code 1 --severity CRITICAL,HIGH --ignore-unfixed --format table --output trivy-image-report.txt $IMAGE_TAG
-
-      - name: 📤 Upload Trivy image scan report
-        uses: actions/upload-artifact@v4
+        uses: aquasecurity/trivy-action@master
         with:
-          name: trivy-image-report
-          path: trivy-image-report.txt
+          scan-type: "image"
+          severity: CRITICAL,HIGH
+          scan-ref: ${{ env.IMAGE_TAG }}
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          output: "trivy-image-report.txt"
 
       - name: 🚀 Push Image to GHCR & ACR
         run: |
@@ -197,9 +194,3 @@ jobs:
           docker tag $GHCR_TAG $ACR_TAG
           docker push $GHCR_TAG
           docker push $ACR_TAG
-
-
-
-
-
-  
