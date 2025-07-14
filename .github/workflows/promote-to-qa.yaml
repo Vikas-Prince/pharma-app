@@ -1,0 +1,50 @@
+name: Promote to QA
+
+on:
+  workflow_dispatch:
+    inputs:
+      promote_from:
+        description: "Source environment"
+        required: true
+        default: "dev"
+      promote_to:
+        description: "Target environment"
+        required: true
+        default: "qa"
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout GitOps repo
+        uses: actions/checkout@v4
+
+      - name: Configure Git user
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Extract image tag from source env
+        id: extract
+        run: |
+          IMAGE_LINE=$(grep "image:" environments/${{ github.event.inputs.promote_from }}/rollout-patch.yaml)
+          IMAGE_TAG=$(echo $IMAGE_LINE | awk '{print $2}')
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+          echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Update target env image tag
+        run: |
+          sed -i "s|image: .*|image: ${{ env.IMAGE_TAG }}|" environments/${{ github.event.inputs.promote_to }}/rollout-patch.yaml
+
+      - name: Create PR to promote
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GHCR_TOKEN }}
+          commit-message: "chore: promote ${{ env.IMAGE_TAG }} from ${{ github.event.inputs.promote_from }} to ${{ github.event.inputs.promote_to }}"
+          title: "Promote ${{ env.IMAGE_TAG }} to ${{ github.event.inputs.promote_to }}"
+          body: |
+            This PR promotes the image tag from `${{ github.event.inputs.promote_from }}` to `${{ github.event.inputs.promote_to }}`.
+            Promoted version: `${{ env.IMAGE_TAG }}`
+          base: main
+          branch: promote-${{ github.event.inputs.promote_from }}-to-${{ github.event.inputs.promote_to }}-${{ github.run_id }}
