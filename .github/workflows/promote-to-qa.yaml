@@ -21,15 +21,20 @@ jobs:
     steps:
       - name: Checkout GitOps repo
         uses: actions/checkout@v4
+        with:
+          repository: Vikas-Prince/test-ops
+          token: ${{ secrets.GHCR_TOKEN }}
+          path: test-ops
 
       - name: Configure Git user
         run: |
+          cd test-ops
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
       - name: Update image tag in Prod rollout-patch
         run: |
-          cd environments/prod
+          cd test-ops
           sed -i "s|image: .*|image: <ACR_LOGIN_SERVER>/springboot-app:${{ github.event.inputs.image_tag }}|" environments/prod/rollout-patch.yaml
 
       - name: Commit & PR
@@ -40,3 +45,5 @@ jobs:
           body: "Triggered manually via workflow_dispatch."
           branch: promote-prod-${{ github.run_id }}
           base: main
+          path: test-ops
+
