@@ -12,6 +12,13 @@ on:
         required: true
         default: "qa"
 
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  BRANCH_NAME: promote-${{ github.event.inputs.promote_from }}-to-${{ github.event.inputs.promote_to }}-${{ github.run_id }}
+
 jobs:
   promote:
     runs-on: ubuntu-latest
@@ -28,7 +35,11 @@ jobs:
       - name: Extract image tag from source env
         id: extract
         run: |
-          IMAGE_LINE=$(grep "image:" environments/${{ github.event.inputs.promote_from }}/rollout-patch.yaml)
+          IMAGE_LINE=$(grep "image:" environments/${{ github.event.inputs.promote_from }}/rollout-patch.yaml || true)
+          if [[ -z "$IMAGE_LINE" ]]; then
+            echo "Error: No image line found in rollout-patch.yaml of ${{ github.event.inputs.promote_from }}"
+            exit 1
+          fi
           IMAGE_TAG=$(echo $IMAGE_LINE | awk '{print $2}')
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
           echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
@@ -38,13 +49,17 @@ jobs:
           sed -i "s|image: .*|image: ${{ env.IMAGE_TAG }}|" environments/${{ github.event.inputs.promote_to }}/rollout-patch.yaml
 
       - name: Create PR to promote
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v5.0.2
         with:
           token: ${{ secrets.GHCR_TOKEN }}
           commit-message: "chore: promote ${{ env.IMAGE_TAG }} from ${{ github.event.inputs.promote_from }} to ${{ github.event.inputs.promote_to }}"
           title: "Promote ${{ env.IMAGE_TAG }} to ${{ github.event.inputs.promote_to }}"
           body: |
-            This PR promotes the image tag from `${{ github.event.inputs.promote_from }}` to `${{ github.event.inputs.promote_to }}`.
-            Promoted version: `${{ env.IMAGE_TAG }}`
+            ## Promote Image
+
+            This PR promotes the image tag from **`${{ github.event.inputs.promote_from }}`** to **`${{ github.event.inputs.promote_to }}`**.
+
+            **Promoted Version**: `${{ env.IMAGE_TAG }}`
+
           base: main
-          branch: promote-${{ github.event.inputs.promote_from }}-to-${{ github.event.inputs.promote_to }}-${{ github.run_id }}
+          branch: ${{ env.BRANCH_NAME }}
