@@ -94,6 +94,8 @@ jobs:
             -Dsonar.projectKey=pharma-app
             -Dsonar.qualitygate.wait=true
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            -Dsonar.java.binaries=target/classes
+
 
   trivy-fs-scan:
     name: Trivy Filesystem Scan
