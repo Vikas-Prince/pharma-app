@@ -29,6 +29,7 @@ jobs:
 
       - name: Update image tag in Prod rollout-patch
         run: |
+          cd environments/prod
           sed -i "s|image: .*|image: <ACR_LOGIN_SERVER>/springboot-app:${{ github.event.inputs.image_tag }}|" environments/prod/rollout-patch.yaml
 
       - name: Commit & PR
