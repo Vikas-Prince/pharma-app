@@ -45,6 +45,7 @@ jobs:
       - name: Commit & PR
         uses: peter-evans/create-pull-request@v5
         with:
+          token: ${{ secrets.GHCR_TOKEN }}
           commit-message: "chore(prod): Promote ${{ github.event.inputs.image_tag }} to prod"
           title: "Promote to Prod - ${{ github.event.inputs.image_tag }}"
           body: "Triggered manually via workflow_dispatch."
