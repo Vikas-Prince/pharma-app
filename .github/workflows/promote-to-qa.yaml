@@ -15,6 +15,9 @@ on:
         required: true
         default: "qa"
 
+permissions:
+  contents: write
+
 jobs:
   update-prod-manifest:
     runs-on: ubuntu-latest
