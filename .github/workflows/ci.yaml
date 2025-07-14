@@ -3,8 +3,7 @@ name: Java CI - Enterprise Workflow
 on:
   push:
     branches:
-      - develop
-      - release
+      - main
   pull_request:
     branches:
       - develop
