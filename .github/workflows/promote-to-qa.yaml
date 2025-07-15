@@ -71,7 +71,7 @@ jobs:
       - name: Push Image to ACR
         run: |
           ACR_TAG=${{ secrets.ACR_NAME }}.azurecr.io/springboot-app:${{ github.event.inputs.image_tag }}
-          docker tag $ACR_TAG
+          docker tag $IMAGE_TAG $ACR_TAG
           docker push $ACR_TAG
 
 
