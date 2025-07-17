@@ -38,6 +38,6 @@ jobs:
       - name: Deploy to Nexus
         run: |
           mvn deploy \
-            -DaltDeploymentRepository=nexus::default::${{ secrets.NEXUS_URL }} \
-            -Dnexus.username=${{ secrets.NEXUS_USERNAME }} \
-            -Dnexus.password=${{ secrets.NEXUS_PASSWORD }}
+            -DaltDeploymentRepository=nexus::default::http://98.70.35.194:8081/repository/maven-snapshots/ \
+            -Dnexus.username=admin \
+            -Dnexus.password=admin
