@@ -13,31 +13,12 @@ permissions:
   contents: read
 
 jobs:
-  push-artifact-to-nexus:
-    name: Push Artifact to Nexus
+  slack-test:
     runs-on: ubuntu-latest
-    # needs: docker-build-and-scan
-
 
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Set dynamic version (based on commit SHA)
-        run: mvn versions:set -DnewVersion=1.0.0-${{ github.sha }}-SNAPSHOT
-
-      - name: 🛠️ Build Artifact (JAR)
-        run: mvn clean package
-
-      - name: Deploy to Nexus
+      - name: ✅ Send basic Slack message
         run: |
-           mvn deploy \
-            -DaltDeploymentRepository=nexus::default::${{ secrets.NEXUS_URL }} \
-            -Dnexus.username=${{ secrets.NEXUS_USERNAME }} \
-            -Dnexus.password=${{ secrets.NEXUS_PASSWORD }}
+          curl -X POST -H 'Content-type: application/json' \
+          --data '{"text":"📢 Hello from GitHub Actions! This is a test notification from *csi-pharma* pipeline."}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
