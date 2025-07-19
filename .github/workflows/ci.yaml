@@ -59,7 +59,7 @@ jobs:
 
       - name: Push Image to ACR
         run: |
-          ACR_TAG=${{ secrets.ACR_NAME }}.azurecr.io/pharma-prod:${{ github.sha }}
+          ACR_TAG=${{ secrets.ACR_NAME }}.azurecr.io/pharma-staging:${{ github.sha }}
           docker push $ACR_TAG
 
   update-gitops-staging:
