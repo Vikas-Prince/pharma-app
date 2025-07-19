@@ -63,7 +63,7 @@ jobs:
           docker push $ACR_TAG
 
   update-gitops-staging:
-    needs: update-gitops-dev
+    needs: docker-build-and-scan
     runs-on: ubuntu-latest
     environment:
       name: staging
